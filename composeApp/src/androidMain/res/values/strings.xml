@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">InteriorDesign</string>
+    <string name="submitBtn">SUBMIT</string>
+    <string name="registerBtn">PracticeKMP</string>
+    <string name="loginHead">PracticeKMP</string>
+    <string name="registerHead">PracticeKMP</string>
+</resources>

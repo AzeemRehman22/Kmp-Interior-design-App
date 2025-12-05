@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PracticeKMP</string>
+    <string name="submitBtn">SUBMIT</string>
+    <string name="registerBtn">REGISTER</string>
+    <string name="loginHead">LOGIN SCREEN</string>
+    <string name="registerHead">REGISTER SCREEN</string>
+    <string name="signUpBtn">SIGNUP</string>
+    <string name="title">Construction</string>
+    <string name="sub_title">Design</string>
+</resources>
