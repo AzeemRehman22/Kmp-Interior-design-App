@@ -31,7 +31,10 @@ jobs:
             -scheme iosApp \
             -configuration Release \
             -sdk iphoneos \
-            -derivedDataPath build
+            DEVELOPMENT_TEAM=7XYZ123ABC \
+            CODE_SIGN_STYLE=Automatic \
+            -archivePath build/iosApp.xcarchive \
+            archive
 
       - name: Export IPA
         run: |
