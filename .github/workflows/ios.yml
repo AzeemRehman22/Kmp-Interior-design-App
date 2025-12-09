@@ -1,54 +1,48 @@
-name: Build IPA (KMP)
+name: Build iOS (IPA)
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 jobs:
   build-ios:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout project
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
 
-      - name: Set up Gradle
+      - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Build shared framework (Compose Multiplatform/KMP)
-        run: ./gradlew :composeApp:assembleXCFramework
+      - name: Install Xcode tools
+        run: sudo xcode-select -s /Applications/Xcode.app
 
-      - name: Install CocoaPods (if exist)
-        run: |
-          if [ -f iosApp/Podfile ]; then
-            cd iosApp
-            pod install
-          fi
-
-      - name: Build IPA (Unsigned)
+      - name: Build iOS project with Xcode
         run: |
           cd iosApp
           xcodebuild \
+            -project iosApp.xcodeproj \
             -scheme iosApp \
             -configuration Release \
             -sdk iphoneos \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            archive \
-            -archivePath build/iosApp.xcarchive
+            -derivedDataPath build
 
-          mkdir -p build/ipa/Payload
-          cp -R build/iosApp.xcarchive/Products/Applications/*.app build/ipa/Payload/
-          cd build/ipa && zip -r iosApp.ipa Payload
+      - name: Export IPA
+        run: |
+          cd iosApp
+          xcodebuild -exportArchive \
+            -archivePath build/Build/Products/Release-iphoneos/iosApp.xcarchive \
+            -exportOptionsPlist exportOptions/ExportOptions.plist \
+            -exportPath output
 
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
         with:
-          name: iosApp-ipa
-          path: iosApp/build/ipa/iosApp.ipa
+          name: iosApp-release
+          path: iosApp/output/*.ipa
